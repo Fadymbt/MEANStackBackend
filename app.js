@@ -1,39 +1,70 @@
 const express = require('express');
-const path = require('path');
-const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const app = express();
+
+const homeRoutes = require('./routes/home_routes');
+const userRoutes = require('./routes/user_routes');
+
 
 require('./config/passport');
 require('dotenv').config();
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+// Start Database Connection
+mongoose.connect(process.env.MONGO_DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
 
-const app = express();
+});
+mongoose.connection.on('connected', () => {
+    console.log('==================================== Database connectd ====================================');
+});
+mongoose.connection.on('error', () => {
+    console.log('==================================== Database Failed ====================================');
+});
 
+// Cross-Origin middleware to help with cross platform requests
+app.use(cors({origin :true, credentials: true}));
+
+// logging HTTP requests
 app.use(morgan('dev'));
 
+// Parse request bodies
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-const mongoURI = 'mongodb://localhost:27017/mean_stack';
+// Serve static files like images and g-code files
+app.use(express.static("./public"));
 
-mongoose.connect(
-    mongoURI,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-)
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(err));
+// Passport middleware for authentication
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.use(cors());
+// Config Passport middleware for authentication
+require('./config/passport')(passport);
 
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
-app.use(express.static(path.join(__dirname, 'public')));
+// Routes setup
+app.use('/', homeRoutes);
+app.use('/user', userRoutes);
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// Error handling
+app.use((req, res, next) => { //404 Not Found
+    const err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
+
+app.use((err, req, res, next) => {
+    const status = err.status || 500;
+    const error = err.message || 'Error processing your request';
+
+    res.status(status).send({
+        error
+    })
+});
 
 module.exports = app;
