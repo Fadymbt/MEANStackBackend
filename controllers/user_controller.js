@@ -1,10 +1,11 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
 
 let userController = {};
 
 userController.register = async (req, res, next) => {
-    const { first_name, last_name, user_name, email, password } = req.body;
+    const {first_name, last_name, user_name, email, password} = req.body;
     const newUser = new User({
         first_name,
         last_name,
@@ -15,7 +16,7 @@ userController.register = async (req, res, next) => {
 
     try {
         const user = await newUser.save();
-        return res.send({ user });
+        return res.send({user});
     } catch (error) {
         if (error.name === "MongoError" && error.code === 11000) {
             next(new Error("User already exists"));
@@ -25,12 +26,12 @@ userController.register = async (req, res, next) => {
     }
 };
 
-userController.login = async (request, response, next) => {
-    const { user_name, password } = request.body;
+userController.login = async (req, res, next) => {
+    const {user_name, password} = req.body;
     try {
-        const user = await User.findOne({ user_name });
+        const user = await User.findOne({user_name});
         if (!user) {
-            const err = new Error(`${ user_name } was not found`);
+            const err = new Error(`${user_name} was not found`);
             err.status = 401;
             return next(err);
         }
@@ -43,13 +44,13 @@ userController.login = async (request, response, next) => {
                 // Token validity time
                 const expire = process.env.EXPIRES_IN;
                 // For now just id but we can pass all the user object {sub:user._id}
-                const token = jwt.sign({ _id: user._id }, secret, {
+                const token = jwt.sign({_id: user._id}, secret, {
                     expiresIn: expire
                 });
 
-                response.send({ token, user });
+                res.send({token, user});
             } else {
-                response.status(401).send({
+                res.status(401).send({
                     error: "Incorrect username or password",
                 });
             }
@@ -59,9 +60,55 @@ userController.login = async (request, response, next) => {
     }
 };
 
-userController.getUser = (req, res, next) => {
-    const message = req.body;
-    res.send(message);
+
+userController.getUsers = async (req, res, next) => {
+    try {
+        const users = {};
+        const allUsers = await User.find(users).where("is_admin").equals(false);
+        res.send(allUsers);
+    } catch (error) {
+        next(error);
+    }
+};
+
+userController.deleteUser = async (req, res, next) => {
+    try {
+        const userId = req.body._id;
+        await User.deleteOne({_id: userId});
+        res.send({message: "User Deleted Successfully"});
+    } catch (error) {
+        next(error);
+    }
+};
+
+userController.changePassword = async (req, res, next) => {
+    const {user_name, old_password, new_password} = req.body;
+
+    try {
+        const user = await User.findOne({user_name});
+        if (!user) {
+            const err = new Error(`${user_name} was not found`);
+            err.status = 401;
+            return next(err);
+        }
+
+        user.isPasswordMatch(old_password, user.password, (err, matched) => {
+            if (matched) {
+                const userId = user._id;
+                bcrypt.genSalt(10, (err, salt) => {
+                    bcrypt.hash(new_password, salt).then(hashed => {
+                        User.updateOne({ _id : userId }, { "$set" : { password : hashed }}).then(()=>{
+                            res.send({message: "Password Updated Successfully"});
+                        });
+                    });
+                });
+            } else {
+                res.send("Incorrect password");
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
 };
 
 module.exports = userController;

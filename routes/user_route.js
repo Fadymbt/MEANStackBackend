@@ -5,7 +5,7 @@ const router = express.Router();
 const userController = require('../controllers/user_controller');
 const adminAuth = require("../config/adminAuthentication");
 
-//Login and Sign up localhost:5000/user/login
+//Login and Sign up localhost:3000/user/login
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 
@@ -30,23 +30,10 @@ router.all('*', (req, res, next) => {
 });
 
 /**
- *
+ * Add Protected Routes under this comment
  */
-router.get('/admin', adminAuth, (req, res, next) => {
-        console.log("body : ", req.body);
-        return res.send({
-            status: 200,
-            user: req.user
-        })
-    });
-
-router.get('/logincheck', (req, res, next) => {
-        return res.send({
-            message: "User Authorised",
-            user: req.user
-        })
-    });
-
-router.get('/getUser', adminAuth, userController.getUser);
+router.get('/getUsers', adminAuth, userController.getUsers);
+router.post('/deleteUser', adminAuth, userController.deleteUser);
+router.put('/changePassword', userController.changePassword);
 
 module.exports = router;

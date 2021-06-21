@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const app = express();
 
-const homeRoutes = require('./routes/home_routes');
-const userRoutes = require('./routes/user_routes');
+const homeRoutes = require('./routes/home_route');
+const userRoutes = require('./routes/user_route');
 
 
 require('./config/passport');
@@ -63,7 +63,7 @@ app.use((err, req, res, next) => {
     const error = err.message || 'Error processing your request';
 
     res.status(status).send({
-        error
+        message : error
     })
 });
 
