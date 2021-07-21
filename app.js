@@ -8,6 +8,7 @@ const app = express();
 
 const homeRoutes = require('./routes/home_route');
 const userRoutes = require('./routes/user_route');
+const fileRoutes = require('./routes/file_route');
 
 
 require('./config/passport');
@@ -21,7 +22,7 @@ mongoose.connect(process.env.MONGO_DB_URL, {
 
 });
 mongoose.connection.on('connected', () => {
-    console.log('==================================== Database connectd ====================================');
+    console.log('==================================== Database Connected ====================================');
 });
 mongoose.connection.on('error', () => {
     console.log('==================================== Database Failed ====================================');
@@ -50,6 +51,7 @@ require('./config/passport')(passport);
 // Routes setup
 app.use('/', homeRoutes);
 app.use('/user', userRoutes);
+app.use('/file', fileRoutes);
 
 // Error handling
 app.use((req, res, next) => { //404 Not Found
