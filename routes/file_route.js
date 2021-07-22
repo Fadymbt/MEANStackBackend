@@ -11,7 +11,7 @@ const fileStoreLocation = multer.diskStorage({
         cb(null, './uploads');
     },
     filename: (req,file,cb) => {
-        cb(null, req.user._id + "_" + Date.now() + "_" + file.originalname);
+        cb(null, req.user._id + "|" + Date.now() + "|" + file.originalname);
     }
 });
 let upload = multer({storage: fileStoreLocation}).single('file');

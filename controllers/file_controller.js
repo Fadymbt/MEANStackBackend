@@ -12,7 +12,7 @@ fileController.uploadFile = (req, res, next) => {
     if (req.file) {
         file_new_name = req.file.filename;
         file_original_name = req.file.filename;
-        file_original_name = file_original_name.split("_")[2];
+        file_original_name = file_original_name.split("|")[2];
     } else {
         file_new_name = 'notFile.gcode';
     }
