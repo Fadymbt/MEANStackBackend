@@ -29,7 +29,7 @@ mongoose.connection.on('error', () => {
 });
 
 // Cross-Origin middleware to help with cross platform requests
-app.use(cors());
+app.use(cors({origin :true, credentials: true}));
 
 // logging HTTP requests
 app.use(morgan('dev'));
