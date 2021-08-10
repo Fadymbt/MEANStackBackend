@@ -1,5 +1,6 @@
 const File = require("../models/model_file");
 const path = require("path");
+const { PythonShell } = require('python-shell');
 
 let fileController = {};
 
@@ -26,24 +27,36 @@ fileController.uploadFile = (req, res, next) => {
     return res.send({original_name: req.file.originalname, upload_name: req.file.filename})
 };
 
+fileController.saveDownloadURL = (req, res, next) => {
+    try {
+        let user_id = req.body._id;
+        let file_name = req.body.file_name;
+        let original_name = req.body.original_name;
+        let download_url = req.body.download_url;
+
+        const newFile = new File({
+            file_name: file_name,
+            original_name: original_name,
+            download_url: download_url,
+            user_id: user_id
+        });
+
+        newFile.save();
+        res.send({ message: "Upload Successful"});
+    }
+    catch (error) {
+        next(error);
+    }
+};
+
 fileController.downloadFile = (req, res, next) => {
     let temp_file = path.join(__dirname,'../uploads') +'/'+ req.body.file_name;
-    console.log(temp_file);
     res.sendFile(temp_file);
 };
 
 fileController.deleteFile = async (req, res, next) => {
     try {
         const fileId = req.body.file._id;
-        const fs = require('fs');
-        const filePath = path.join(__dirname,'../uploads') +'/'+ req.body.file.new_name;
-        fs.rm(filePath, { recursive:true }, (err) => {
-            if(err){
-                console.error(err.message);
-                return;
-            }
-            console.log("File deleted successfully");
-        });
         await File.deleteOne({_id: fileId});
         res.send({message: "File Deleted Successfully"});
     } catch (error) {
@@ -56,6 +69,29 @@ fileController.getFiles = async (req, res, next) => {
         const files = {};
         const allFiles = await File.find(files).where("user_id").equals(req.body._id);
         res.send(allFiles);
+    } catch (error) {
+        next(error);
+    }
+};
+
+fileController.getFileAsString = async (req, res, next) => {
+    try {
+        let file_id = req.body._id;
+        await File.findOne({_id: file_id}, (err, file) => {
+            const pythonPath = path.join(__dirname, '../python/main.py');
+            const url = file.download_url;
+
+            let options = {
+                mode: 'text',
+                args: [url]
+            };
+
+            PythonShell.run(pythonPath, options, (err, results) => {
+                if (err) throw err;
+                // results is an array consisting of messages collected during execution
+                res.status(200).send({data: results.join("\n")});
+            });
+        });
     } catch (error) {
         next(error);
     }

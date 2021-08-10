@@ -2,11 +2,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ModelFileSchema = new Schema({
+    file_name: {
+        type: String,
+        required: true,
+        unique: true
+    },
     original_name: {
         type: String,
-        required: true
+        required: true,
     },
-    new_name: {
+    download_url: {
         type: String,
         required: true,
         unique: true

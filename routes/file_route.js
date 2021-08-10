@@ -1,20 +1,8 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
-const multer = require("multer");
-
 
 const fileController = require('../controllers/file_controller');
-
-const fileStoreLocation = multer.diskStorage({
-    destination: (req,file,cb) => {
-        cb(null, './uploads');
-    },
-    filename: (req,file,cb) => {
-        cb(null, req.user._id + "|" + Date.now() + "|" + file.originalname);
-    }
-});
-let upload = multer({storage: fileStoreLocation}).single('file');
 
 /**
  * Customize auth message Protect the routes
@@ -38,9 +26,11 @@ router.all('*', (req, res, next) => {
 /**
  * Add Protected Routes under this comment
  */
-router.post('/uploadFile', upload, fileController.uploadFile);
+router.post('/uploadFile', fileController.uploadFile);
 router.post('/downloadFile', fileController.downloadFile);
 router.post('/deleteFile', fileController.deleteFile);
 router.post('/getFiles', fileController.getFiles);
+router.post('/saveDownloadURL', fileController.saveDownloadURL);
+router.post('/getFileAsString', fileController.getFileAsString);
 
 module.exports = router;
