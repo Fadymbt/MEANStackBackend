@@ -29,12 +29,7 @@ mongoose.connection.on('error', () => {
 });
 
 // Cross-Origin middleware to help with cross platform requests
-// app.use(cors({origin :true, credentials: true}));
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+app.use(cors({origin :"http://localhost:4200", credentials: true}));
 
 // logging HTTP requests
 app.use(morgan('dev'));
