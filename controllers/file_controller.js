@@ -78,7 +78,8 @@ fileController.getFileAsString = async (req, res, next) => {
     try {
         let file_id = req.body._id;
         await File.findOne({_id: file_id}, (err, file) => {
-            const pythonPath = path.join(__dirname, '../python/main.py');
+            // const pythonPath = path.join(__dirname, '../python/main.py');
+            const pythonPath = "python/main.py";
             const url = file.download_url;
 
             let options = {
