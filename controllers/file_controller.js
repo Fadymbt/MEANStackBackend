@@ -1,4 +1,5 @@
 const File = require("../models/file");
+const Status = require("../models/status");
 const { PythonShell } = require('python-shell');
 
 let fileController = {};
@@ -55,6 +56,7 @@ fileController.saveDownloadURL = (req, res, next) => {
 fileController.deleteFile = async (req, res, next) => {
     try {
         const fileId = req.body.file._id;
+        await Status.deleteMany({file_id: fileId});
         await File.deleteOne({_id: fileId});
         res.send({message: "File Deleted Successfully"});
     } catch (error) {
