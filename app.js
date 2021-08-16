@@ -9,6 +9,7 @@ const app = express();
 const homeRoutes = require('./routes/home_route');
 const userRoutes = require('./routes/user_route');
 const fileRoutes = require('./routes/file_route');
+const statusRoutes = require('./routes/status_route');
 
 
 require('./config/passport');
@@ -52,6 +53,7 @@ require('./config/passport')(passport);
 app.use('/', homeRoutes);
 app.use('/user', userRoutes);
 app.use('/file', fileRoutes);
+app.use('/status', statusRoutes);
 
 // Error handling
 app.use((req, res, next) => { //404 Not Found

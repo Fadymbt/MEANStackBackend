@@ -10,6 +10,9 @@ const StatusSchema = new Schema({
         type: String,
         required: true
     },
+    file_id: {
+        type: String
+    },
     liked_by: [String],
     comments_id: [String],
     created: {

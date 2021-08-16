@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
-const fileController = require('../controllers/file_controller');
+const statusController = require('../controllers/status_controller');
 
 /**
  * Customize auth message Protect the routes
@@ -26,10 +26,7 @@ router.all('*', (req, res, next) => {
 /**
  * Add Protected Routes under this comment
  */
-router.post('/uploadFile', fileController.uploadFile);
-router.post('/deleteFile', fileController.deleteFile);
-router.post('/getFiles', fileController.getFiles);
-router.post('/saveDownloadURL', fileController.saveDownloadURL);
-router.post('/getFileAsString', fileController.getFileAsString);
+router.post('/addStatus', statusController.addStatus);
+router.get('/getAllStatuses', statusController.getAllStatuses);
 
 module.exports = router;

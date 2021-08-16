@@ -1,30 +1,33 @@
-const File = require("../models/model_file");
-const path = require("path");
+const File = require("../models/file");
 const { PythonShell } = require('python-shell');
 
 let fileController = {};
 
 
 fileController.uploadFile = (req, res, next) => {
-    let user_id = req.user._id;
-    let file_original_name;
-    let file_new_name;
+    try {
+        let user_id = req.user._id;
+        let file_original_name;
+        let file_new_name;
 
-    if (req.file) {
-        file_new_name = req.file.filename;
-        file_original_name = req.file.filename;
-        file_original_name = file_original_name.split("|")[2];
-    } else {
-        file_new_name = 'notFile.gcode';
+        if (req.file) {
+            file_new_name = req.file.filename;
+            file_original_name = req.file.filename;
+            file_original_name = file_original_name.split("|")[2];
+        } else {
+            file_new_name = 'notFile.gcode';
+        }
+
+        const newFile = new File({
+            original_name: file_original_name,
+            new_name: file_new_name,
+            user_id: user_id
+        });
+        newFile.save();
+        res.send({original_name: req.file.originalname, upload_name: req.file.filename})
+    } catch (error) {
+        next(error);
     }
-
-    const newFile = new File({
-        original_name: file_original_name,
-        new_name: file_new_name,
-        user_id: user_id
-    });
-    newFile.save();
-    return res.send({original_name: req.file.originalname, upload_name: req.file.filename})
 };
 
 fileController.saveDownloadURL = (req, res, next) => {
@@ -49,11 +52,6 @@ fileController.saveDownloadURL = (req, res, next) => {
     }
 };
 
-fileController.downloadFile = (req, res, next) => {
-    let temp_file = path.join(__dirname,'../uploads') +'/'+ req.body.file_name;
-    res.sendFile(temp_file);
-};
-
 fileController.deleteFile = async (req, res, next) => {
     try {
         const fileId = req.body.file._id;
@@ -67,7 +65,7 @@ fileController.deleteFile = async (req, res, next) => {
 fileController.getFiles = async (req, res, next) => {
     try {
         const files = {};
-        const allFiles = await File.find(files).where("user_id").equals(req.body._id);
+        const allFiles = await File.find(files).where("user_id").equals(req.body._id).sort({created: "desc"});
         res.send(allFiles);
     } catch (error) {
         next(error);

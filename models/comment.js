@@ -6,11 +6,7 @@ const CommentSchema = new Schema({
         type: String,
         required: true
     },
-    comment_type: {
-        type: String,
-        required: true
-    },
-    type_id: {
+    content: {
         type: String,
         required: true
     },
