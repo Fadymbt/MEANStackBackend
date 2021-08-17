@@ -54,4 +54,25 @@ statusController.getAllStatuses = (req, res, next) => {
     }
 };
 
+statusController.getUserStatuses = async (req, res, next) => {
+    try {
+        let userId = req.body._id;
+        let statuses = {};
+        statuses = await Status.find({user_id: userId}).sort({created: "desc"});
+        res.send(statuses);
+    } catch (error) {
+        next(error);
+    }
+};
+
+statusController.deleteStatus = async (req, res, next) => {
+    try {
+        const statusId = req.body._id;
+        await Status.deleteOne({_id: statusId});
+        res.send({message: "Status Deleted Successfully"});
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = statusController;
