@@ -75,4 +75,32 @@ statusController.deleteStatus = async (req, res, next) => {
     }
 };
 
+statusController.likeStatus = async (req, res, next) => {
+    try {
+        let user_id = req.user._id;
+        let status_id = req.body.status_id;
+        console.log(user_id);
+        console.log(status_id);
+
+        await Status.updateOne({_id: status_id}, {$push: {liked_by: user_id}}, {new: true, upsert: true});
+
+        res.send({message: "Status Liked Successfully"});
+    } catch (error) {
+        next(error)
+    }
+}
+
+statusController.dislikeStatus = async (req, res, next) => {
+    try {
+        let user_id = req.user._id;
+        let status_id = req.body.status_id;
+
+        await Status.updateOne({_id: status_id}, {$pull: {liked_by: user_id}}, {new: true, upsert: true});
+
+        res.send({message: "Status Disliked Successfully"});
+    } catch (error) {
+        next(error)
+    }
+}
+
 module.exports = statusController;

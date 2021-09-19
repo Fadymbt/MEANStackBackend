@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
-const statusController = require('../controllers/status_controller');
+const commentController = require('../controllers/comment_controller');
 
 /**
  * Customize auth message Protect the routes
@@ -26,11 +26,8 @@ router.all('*', (req, res, next) => {
 /**
  * Add Protected Routes under this comment
  */
-router.post('/addStatus', statusController.addStatus);
-router.get('/getAllStatuses', statusController.getAllStatuses);
-router.post('/getUserStatuses', statusController.getUserStatuses);
-router.post('/deleteStatus', statusController.deleteStatus);
-router.post('/likeStatus', statusController.likeStatus)
-router.post('/dislikeStatus', statusController.dislikeStatus)
+router.post('/addComment', commentController.addComment);
+router.post('/deleteComment', commentController.deleteComment)
+router.get('/getStatusComments/:status_id', commentController.getStatusComments)
 
 module.exports = router;
