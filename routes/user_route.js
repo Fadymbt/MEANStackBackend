@@ -35,5 +35,6 @@ router.all('*', (req, res, next) => {
 router.get('/getUsers', adminAuth, userController.getUsers);
 router.post('/deleteUser', adminAuth, userController.deleteUser);
 router.put('/changePassword', userController.changePassword);
+router.put('/updateUserProfilePicture', userController.updateUserProfilePicture);
 
 module.exports = router;

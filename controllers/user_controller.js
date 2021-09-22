@@ -5,13 +5,14 @@ const bcrypt = require('bcrypt');
 let userController = {};
 
 userController.register = async (req, res, next) => {
-    const {first_name, last_name, user_name, email, password} = req.body;
+    const {first_name, last_name, user_name, email, password, user_type} = req.body;
     const newUser = new User({
         first_name,
         last_name,
         user_name,
         email,
-        password
+        password,
+        is_admin: user_type === 'Admin'
     });
 
     try {
@@ -110,5 +111,16 @@ userController.changePassword = async (req, res, next) => {
         next(error);
     }
 };
+
+userController.updateUserProfilePicture = async (req, res, next) => {
+    try {
+        let user_id = req.user._id;
+        let profilePicURL = req.body.profile_picture;
+        await User.updateOne({_id: user_id}, {$set: {profile_picture: profilePicURL}});
+        res.send({profile_picture: profilePicURL});
+    } catch (error) {
+        next(error);
+    }
+}
 
 module.exports = userController;

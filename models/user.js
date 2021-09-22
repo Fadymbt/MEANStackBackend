@@ -30,6 +30,9 @@ const UserSchema = new Schema({
       type: Boolean,
       default: false
     },
+    profile_picture: {
+        type: String
+    },
     created: {
         type: Date,
         default: Date.now
