@@ -21,4 +21,4 @@ const CommentSchema = new Schema({
     }
 });
 
-module.exports = User = mongoose.model('comment', CommentSchema);
+module.exports = Comments = mongoose.model('comment', CommentSchema);

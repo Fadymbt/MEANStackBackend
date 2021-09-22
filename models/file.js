@@ -28,4 +28,4 @@ const ModelFileSchema = new Schema({
     }
 });
 
-module.exports = User = mongoose.model('files', ModelFileSchema);
+module.exports = Files = mongoose.model('files', ModelFileSchema);

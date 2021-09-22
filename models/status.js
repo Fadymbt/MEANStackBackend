@@ -21,4 +21,4 @@ const StatusSchema = new Schema({
     }
 });
 
-module.exports = User = mongoose.model('status', StatusSchema);
+module.exports = Status = mongoose.model('status', StatusSchema);
