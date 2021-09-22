@@ -1,7 +1,4 @@
 const Comment = require("../models/comment");
-const Status = require("../models/status");
-const File = require("../models/file");
-const e = require("express");
 
 let commentController = {};
 

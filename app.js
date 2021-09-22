@@ -10,7 +10,8 @@ const homeRoutes = require('./routes/home_route');
 const userRoutes = require('./routes/user_route');
 const fileRoutes = require('./routes/file_route');
 const statusRoutes = require('./routes/status_route');
-const commentRoutes = require('./routes/comment_route')
+const commentRoutes = require('./routes/comment_route');
+const printerRoutes = require('./routes/printer_route');
 
 
 require('./config/passport');
@@ -56,6 +57,7 @@ app.use('/user', userRoutes);
 app.use('/file', fileRoutes);
 app.use('/status', statusRoutes);
 app.use('/comment', commentRoutes);
+app.use('/printer', printerRoutes);
 
 // Error handling
 app.use((req, res, next) => { //404 Not Found
