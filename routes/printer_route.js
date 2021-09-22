@@ -27,5 +27,10 @@ router.all('*', (req, res, next) => {
  * Add Protected Routes under this comment
  */
 
+router.post('/addPrinter', printerController.addPrinter);
+router.post('/deletePrinter', printerController.deletePrinter)
+// router.post('/changePrinterStatus', printerController.changePrinterStatus);
+// router.post('/addPrint', printerController.addPrint);
+
 
 module.exports = router;
