@@ -65,7 +65,7 @@ userController.login = async (req, res, next) => {
 userController.getUsers = async (req, res, next) => {
     try {
         const users = {};
-        const allUsers = await User.find(users).where("is_admin").equals(false);
+        const allUsers = await User.find(users);
         res.send(allUsers);
     } catch (error) {
         next(error);

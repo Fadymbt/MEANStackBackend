@@ -1,4 +1,6 @@
 const Comment = require("../models/comment");
+const Status = require("../models/status");
+const User = require("../models/user");
 
 let commentController = {};
 
@@ -35,9 +37,22 @@ commentController.deleteComment = async (req, res, next) => {
 commentController.getStatusComments = async (req, res, next) => {
     try {
         const { status_id } = req.params;
-        const comments = {};
-        const allComments = await Comment.find(comments).where("status_id").equals(status_id).sort({created: "asc"});
-        res.send(allComments);
+
+        Comment.find({status_id: status_id}, (error, comments) => {
+            let allComments = [];
+
+            comments.forEach((comment) => {
+                User.findOne({_id: comment.user_id}, (error, user) => {
+                    allComments.push({first_name: user.first_name, last_name: user.last_name, user_name: user.user_name, profile_picture: user.profile_picture, comment: comment});
+                    if (allComments.length === comments.length) {
+                        allComments.sort((a, b) => {
+                            return new Date(a.comment.created).getTime() - new Date(b.comment.created).getTime();
+                        });
+                        res.send(allComments);
+                    }
+                })
+            });
+        });
     } catch (error) {
         next(error)
     }
