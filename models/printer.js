@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const PrinterSchema = new Schema({
     name: {
         type: String,
+        unique: true,
         required: true
     },
     status: {
@@ -14,6 +15,10 @@ const PrinterSchema = new Schema({
     current_print_end_time: {
         type: Number
     },
+    access_user_id: [{
+        type: String,
+        dropDups: true
+    }],
     queue: [
         {
             file_name: String,

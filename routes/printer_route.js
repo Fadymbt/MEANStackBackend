@@ -3,6 +3,7 @@ const passport = require('passport');
 const router = express.Router();
 
 const printerController = require('../controllers/printer_controller');
+const adminAuth = require("../config/adminAuthentication");
 
 /**
  * Customize auth message Protect the routes
@@ -27,8 +28,12 @@ router.all('*', (req, res, next) => {
  * Add Protected Routes under this comment
  */
 
-router.post('/addPrinter', printerController.addPrinter);
-router.post('/deletePrinter', printerController.deletePrinter)
+router.post('/addPrinter', adminAuth, printerController.addPrinter);
+router.post('/deletePrinter', adminAuth, printerController.deletePrinter)
+router.post('/addUserToPrinter', adminAuth, printerController.addUserToPrinter);
+router.post('/removeUserFromPrinter', adminAuth, printerController.removeUserFromPrinter);
+router.get('/getPrinters', printerController.getPrinters);
+router.get('/getUserPrinters', printerController.getUserPrinters);
 // router.post('/changePrinterStatus', printerController.changePrinterStatus);
 // router.post('/addPrint', printerController.addPrint);
 
