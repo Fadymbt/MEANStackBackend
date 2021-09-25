@@ -32,10 +32,14 @@ router.post('/addPrinter', adminAuth, printerController.addPrinter);
 router.post('/deletePrinter', adminAuth, printerController.deletePrinter)
 router.post('/addUserToPrinter', adminAuth, printerController.addUserToPrinter);
 router.post('/removeUserFromPrinter', adminAuth, printerController.removeUserFromPrinter);
-router.get('/getPrinters', printerController.getPrinters);
-router.get('/getUserPrinters', printerController.getUserPrinters);
-// router.post('/changePrinterStatus', printerController.changePrinterStatus);
-// router.post('/addPrint', printerController.addPrint);
+router.get('/getPrinters', adminAuth, printerController.getPrinters);
+router.get('/getUserPrinters/:user_id', printerController.getUserPrinters);
+router.get('/getOtherUserPrinters/:user_id', adminAuth, printerController.getOtherUserPrinters);
+router.get('/getOtherUserOtherPrinters/:user_id', adminAuth, printerController.getOtherUserOtherPrinters);
+router.post('/changePrinterStatus', printerController.changePrinterStatus);
+router.post('/addPrint', printerController.addPrint);
+router.post('/endPrint', printerController.endPrint);
+router.get('/getPrints/:printer_id', printerController.addPrint);
 
 
 module.exports = router;

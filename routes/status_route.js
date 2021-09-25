@@ -28,7 +28,7 @@ router.all('*', (req, res, next) => {
  */
 router.post('/addStatus', statusController.addStatus);
 router.get('/getAllStatuses', statusController.getAllStatuses);
-router.post('/getUserStatuses', statusController.getUserStatuses);
+router.get('/getUserStatuses', statusController.getUserStatuses);
 router.post('/deleteStatus', statusController.deleteStatus);
 router.post('/likeStatus', statusController.likeStatus)
 router.post('/dislikeStatus', statusController.dislikeStatus)

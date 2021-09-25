@@ -6,7 +6,7 @@ let commentController = {};
 
 commentController.addComment = async (req, res, next) => {
     try {
-        let user_id = req.body.user_id;
+        let user_id = req.user._id;
         let status_id = req.body.status_id;
         let content = req.body.content;
 

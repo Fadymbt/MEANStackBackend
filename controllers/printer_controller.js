@@ -39,16 +39,29 @@ printerController.getPrinters = async (req, res, next) => {
 
 printerController.getUserPrinters = async  (req, res, next) => {
     try {
-        let user_id;
-        if (req.user._id !== undefined) {
-            user_id = req.user._id;
-        }
-        else {
-            user_id = req.body.user_id;
-        }
-        let user_printers = await Printer.find({'user_id': {$in: [user_id]}});
-
+        let user_id = req.user._id;
+        let user_printers = await Printer.find({access_user_id: {$in: [user_id]}});
         res.send(user_printers)
+    } catch (error) {
+        next(error);
+    }
+}
+
+printerController.getOtherUserPrinters = async (req, res, next) => {
+    try {
+        const { user_id } = req.params;
+        let user_printers = await Printer.find({access_user_id: {$in: [user_id]}})
+        res.send(user_printers);
+    } catch (error) {
+        next(error);
+    }
+}
+
+printerController.getOtherUserOtherPrinters = async (req, res, next) => {
+    try {
+        const { user_id } = req.params;
+        let user_printers = await Printer.find({access_user_id: {$ne: [user_id]}})
+        res.send(user_printers);
     } catch (error) {
         next(error);
     }
@@ -75,6 +88,52 @@ printerController.removeUserFromPrinter = async (req, res, next) => {
         await Printer.updateOne({_id: printer_id}, {$pull: {access_user_id: user_id}}, {new: true, upsert: true, multi: true});
 
         res.send("User Access Updated Successfully");
+    } catch (error) {
+        next(error);
+    }
+}
+
+printerController.changePrinterStatus = async (req, res, next) => {
+    try {
+        let _id = req.body.printer_id;
+        let status = req.body.status;
+
+        await Printer.updateOne({_id: _id}, {$push: {status: status}}, {new: true, upsert: true, multi: true});
+
+        res.send("Printer Status Changed Successfully");
+    } catch (error) {
+        next(error);
+    }
+}
+
+startPrint = (_id, user_id, file_name, printing_duration) => {
+    let printer = Printer.find({_id: _id});
+    let current_print;
+
+    if (printer.queue.length > 0) {
+        if (!printer.queue[0].active) {
+            current_print = printer.queue[0];
+            current_print.active = true;
+            current_print.print_start_time = new Date().getTime();
+            current_print.print_end_time = current_print.print_start_time + current_print.duration;
+            Printer.updateOne({_id: _id, queue: {user_id: user_id, file_name: file_name, duration: printing_duration}}, {$push: {queue: current_print}}, {new: true, upsert: true, multi: true});
+        }
+    }
+}
+
+printerController.addPrint = async (req, res, next) => {
+    try {
+        let _id = req.body.printer_id;
+        let file_name = req.body.file_name;
+        let user_id = req.user._id;
+
+        let printing_duration = Math.floor(Math.random() * (36000000 - 7200000 + 1)) + 7200000;
+
+        await Printer.updateOne({_id: _id}, {$push: {queue: {user_id: user_id, file_name: file_name, duration: printing_duration}}}, {new: true, upsert: true, multi: true});
+
+        startPrint(_id, user_id, file_name, printing_duration);
+
+        res.send("Print Added Successfully");
     } catch (error) {
         next(error);
     }

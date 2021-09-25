@@ -21,8 +21,28 @@ const PrinterSchema = new Schema({
     }],
     queue: [
         {
+            user_id: String,
             file_name: String,
-            printing_time: Number
+            print_start_time: Number,
+            print_end_time: Number,
+            duration: Number,
+            active: {
+                type: Boolean,
+                default: false
+            }
+        }
+    ],
+    finished_prints: [
+        {
+            user_id: String,
+            file_name: String,
+            print_start_time: Number,
+            print_end_time: Number,
+            duration: Number,
+            end_date : {
+                type: Date,
+                default: Date.now
+            }
         }
     ],
     created: {

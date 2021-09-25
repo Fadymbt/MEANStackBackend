@@ -6,8 +6,8 @@ let statusController = {};
 
 statusController.addStatus = async (req, res, next) => {
     try {
+        let user_id = req.user._id;
         let content = req.body.data.content;
-        let user_id = req.body.user_id;
         let file_id;
         let newFile;
 
@@ -56,7 +56,8 @@ statusController.getAllStatuses = (req, res, next) => {
 
 statusController.getUserStatuses = async (req, res, next) => {
     try {
-        let userId = req.body._id;
+        let userId = req.user._id;
+        console.log(userId);
         let statuses = {};
         statuses = await Status.find({user_id: userId}).sort({created: "desc"});
         res.send(statuses);
