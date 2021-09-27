@@ -36,5 +36,10 @@ router.get('/getUsers', adminAuth, userController.getUsers);
 router.post('/deleteUser', adminAuth, userController.deleteUser);
 router.put('/changePassword', userController.changePassword);
 router.put('/updateUserProfilePicture', userController.updateUserProfilePicture);
+router.put('/updateUserFirstName', adminAuth, userController.updateUserFirstName);
+router.put('/updateUserLastName', adminAuth, userController.updateUserLastName);
+router.put('/updateUserEmailName', adminAuth, userController.updateUserEmailName);
+router.put('/updateUserAccessRights', adminAuth, userController.updateUserAccessRights);
+
 
 module.exports = router;

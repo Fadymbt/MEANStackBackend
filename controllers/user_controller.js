@@ -123,4 +123,48 @@ userController.updateUserProfilePicture = async (req, res, next) => {
     }
 }
 
+userController.updateUserFirstName = async (req, res, next) => {
+    try {
+        let user_id = req.body.user_id;
+        let first_name = req.body.first_name;
+        await User.updateOne({_id: user_id}, {$set: {first_name: first_name}});
+        res.send("First Name Updated Successfully");
+    } catch (error) {
+        next(error);
+    }
+}
+
+userController.updateUserLastName = async (req, res, next) => {
+    try {
+        let user_id = req.body.user_id;
+        let last_name = req.body.last_name;
+        await User.updateOne({_id: user_id}, {$set: {last_name: last_name}});
+        res.send("Last Name Updated Successfully");
+    } catch (error) {
+        next(error);
+    }
+}
+
+userController.updateUserEmailName = async (req, res, next) => {
+    try {
+        let user_id = req.body.user_id;
+        let email = req.body.email;
+        await User.updateOne({_id: user_id}, {$set: {email: email}});
+        res.send("Email Updated Successfully");
+    } catch (error) {
+        next(error);
+    }
+}
+
+userController.updateUserAccessRights = async (req, res, next) => {
+    try {
+        let user_id = req.body.user_id;
+        let is_admin = req.body.is_admin;
+        await User.updateOne({_id: user_id}, {$set: {is_admin: is_admin}});
+        res.send("Email Updated Successfully");
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = userController;
