@@ -1,4 +1,6 @@
 const User = require("../models/user");
+const Status = require("../models/status");
+const Comment = require("../models/comment");
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 
@@ -76,6 +78,8 @@ userController.deleteUser = async (req, res, next) => {
     try {
         const userId = req.body._id;
         await User.deleteOne({_id: userId});
+        await Status.deleteOne({user_id: userId});
+        await Comment.deleteOne({user_id: userId});
         res.send({message: "User Deleted Successfully"});
     } catch (error) {
         next(error);

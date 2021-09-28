@@ -39,7 +39,7 @@ statusController.getAllStatuses = (req, res, next) => {
 
             statuses.forEach((status) => {
                 User.findOne({_id: status.user_id}, (error, user) => {
-                    allStatuses.push({first_name: user.first_name, user_name: user.user_name, status: status});
+                    allStatuses.push({first_name: user.first_name, user_name: user.user_name, profile_picture: user.profile_picture, status: status});
                     if (allStatuses.length === statuses.length) {
                         allStatuses.sort((a, b) => {
                             return new Date(b.status.created).getTime() - new Date(a.status.created).getTime();
