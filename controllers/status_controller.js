@@ -3,7 +3,7 @@ const User = require("../models/user");
 
 let statusController = {};
 
-
+// Adds status that has been posted by the user
 statusController.addStatus = async (req, res, next) => {
     try {
         let user_id = req.user._id;
@@ -32,6 +32,7 @@ statusController.addStatus = async (req, res, next) => {
     }
 };
 
+// Returns all statuses of all users based on the date they were posted
 statusController.getAllStatuses = (req, res, next) => {
     try {
         Status.find({},  (error, statuses) => {
@@ -54,6 +55,7 @@ statusController.getAllStatuses = (req, res, next) => {
     }
 };
 
+// Returns only the statuses of the logged in user
 statusController.getUserStatuses = async (req, res, next) => {
     try {
         let userId = req.user._id;
@@ -66,6 +68,7 @@ statusController.getUserStatuses = async (req, res, next) => {
     }
 };
 
+// Deletes status based on the status id
 statusController.deleteStatus = async (req, res, next) => {
     try {
         const statusId = req.body._id;
@@ -76,6 +79,7 @@ statusController.deleteStatus = async (req, res, next) => {
     }
 };
 
+// Likes a status by adding the user id of the user that liked the status to the array liked_by
 statusController.likeStatus = async (req, res, next) => {
     try {
         let user_id = req.user._id;
@@ -91,6 +95,7 @@ statusController.likeStatus = async (req, res, next) => {
     }
 }
 
+// disliked status by removing the user id from the array liked_by
 statusController.dislikeStatus = async (req, res, next) => {
     try {
         let user_id = req.user._id;

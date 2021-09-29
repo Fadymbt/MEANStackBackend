@@ -2,6 +2,7 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const User = require('../models/user');
 
+// Checks if the request header contains a valid jwt token
 module.exports = (passport) => {
     let config = {};
     config.secretOrKey = process.env.SECRET_KEY;

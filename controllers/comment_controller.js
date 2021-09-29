@@ -4,6 +4,7 @@ const User = require("../models/user");
 
 let commentController = {};
 
+// Adds comment to the user
 commentController.addComment = async (req, res, next) => {
     try {
         let user_id = req.user._id;
@@ -23,6 +24,7 @@ commentController.addComment = async (req, res, next) => {
     }
 }
 
+// Deletes comment
 commentController.deleteComment = async (req, res, next) => {
     try {
         const comment_id = req.body.comment_id;
@@ -34,6 +36,7 @@ commentController.deleteComment = async (req, res, next) => {
     }
 }
 
+// Returns all comments of a certain status based on status id
 commentController.getStatusComments = async (req, res, next) => {
     try {
         const { status_id } = req.params;

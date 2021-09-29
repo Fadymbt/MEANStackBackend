@@ -4,33 +4,8 @@ const { PythonShell } = require('python-shell');
 
 let fileController = {};
 
-
-fileController.uploadFile = (req, res, next) => {
-    try {
-        let user_id = req.user._id;
-        let file_original_name;
-        let file_new_name;
-
-        if (req.file) {
-            file_new_name = req.file.filename;
-            file_original_name = req.file.filename;
-            file_original_name = file_original_name.split("|")[2];
-        } else {
-            file_new_name = 'notFile.gcode';
-        }
-
-        const newFile = new File({
-            original_name: file_original_name,
-            new_name: file_new_name,
-            user_id: user_id
-        });
-        newFile.save();
-        res.send({original_name: req.file.originalname, upload_name: req.file.filename})
-    } catch (error) {
-        next(error);
-    }
-};
-
+// Adds the file information to the database,
+// the file itself it uploaded directly from the frontend to firebase storage
 fileController.saveDownloadURL = (req, res, next) => {
     try {
         let user_id = req.body._id;
@@ -53,6 +28,7 @@ fileController.saveDownloadURL = (req, res, next) => {
     }
 };
 
+// Removes file information from the database
 fileController.deleteFile = async (req, res, next) => {
     try {
         const fileId = req.body.file._id;
@@ -64,16 +40,18 @@ fileController.deleteFile = async (req, res, next) => {
     }
 };
 
+// Returns all files for a specific user based on user id from the header
 fileController.getFiles = async (req, res, next) => {
     try {
         const files = {};
-        const allFiles = await File.find(files).where("user_id").equals(req.body._id).sort({created: "desc"});
+        const allFiles = await File.find(files).where("user_id").equals(req.user._id).sort({created: "desc"});
         res.send(allFiles);
     } catch (error) {
         next(error);
     }
 };
 
+// This function will return a gcode file as a string instead of a file
 fileController.getFileAsString = async (req, res, next) => {
     try {
         let file_id = req.body._id;
@@ -87,6 +65,8 @@ fileController.getFileAsString = async (req, res, next) => {
                 args: [url]
             };
 
+            // Runs a python script that reads the gcode file and returns the data inside as a string
+            // it is then sent to the frontend to be rendered
             PythonShell.run(pythonPath, options, (err, results) => {
                 if (err) throw err;
                 // results is an array consisting of messages collected during execution

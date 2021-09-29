@@ -6,7 +6,6 @@ const userController = require('../controllers/user_controller');
 const adminAuth = require("../config/adminAuthentication");
 
 //Login and Sign up localhost:3000/user/login
-router.post('/register', userController.register);
 router.post('/login', userController.login);
 
 
@@ -32,13 +31,14 @@ router.all('*', (req, res, next) => {
 /**
  * Add Protected Routes under this comment
  */
+router.post('/register', adminAuth, userController.register);
 router.get('/getUsers', adminAuth, userController.getUsers);
 router.post('/deleteUser', adminAuth, userController.deleteUser);
 router.put('/changePassword', userController.changePassword);
 router.put('/updateUserProfilePicture', userController.updateUserProfilePicture);
 router.put('/updateUserFirstName', adminAuth, userController.updateUserFirstName);
 router.put('/updateUserLastName', adminAuth, userController.updateUserLastName);
-router.put('/updateUserEmailName', adminAuth, userController.updateUserEmailName);
+router.put('/updateUserEmail', adminAuth, userController.updateUserEmail);
 router.put('/updateUserAccessRights', adminAuth, userController.updateUserAccessRights);
 
 

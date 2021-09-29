@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-
+// Gets token from header and checks if the user is an administrator or not
 const adminAuth = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');

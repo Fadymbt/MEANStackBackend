@@ -19,8 +19,9 @@ const PrinterSchema = new Schema({
         type: String,
         dropDups: true
     }],
-    queue: [
+    printing_queue: [
         {
+            _id: Schema.Types.ObjectId,
             user_id: String,
             file_name: String,
             print_start_time: Number,
@@ -39,6 +40,10 @@ const PrinterSchema = new Schema({
             print_start_time: Number,
             print_end_time: Number,
             duration: Number,
+            picked_up: {
+                type: Boolean,
+                default: false
+            },
             end_date : {
                 type: Date,
                 default: Date.now

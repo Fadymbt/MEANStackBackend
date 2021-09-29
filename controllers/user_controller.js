@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt');
 
 let userController = {};
 
+// Adds new user to the database,
+//only admin can add a new user
 userController.register = async (req, res, next) => {
     const {first_name, last_name, user_name, email, password, user_type} = req.body;
     const newUser = new User({
@@ -29,6 +31,9 @@ userController.register = async (req, res, next) => {
     }
 };
 
+// Logs into the website by generating a new token and sends it in the header
+// also checks if the encrypted password matches the on in the database
+// based on an encryption secret stored in the environments file
 userController.login = async (req, res, next) => {
     const {user_name, password} = req.body;
     try {
@@ -63,7 +68,7 @@ userController.login = async (req, res, next) => {
     }
 };
 
-
+// Returns all users for admin user data management
 userController.getUsers = async (req, res, next) => {
     try {
         const users = {};
@@ -74,6 +79,7 @@ userController.getUsers = async (req, res, next) => {
     }
 };
 
+// Deletes user, only for admin use
 userController.deleteUser = async (req, res, next) => {
     try {
         const userId = req.body._id;
@@ -86,6 +92,7 @@ userController.deleteUser = async (req, res, next) => {
     }
 };
 
+// Updates the password in the database, encrypts, and saves it
 userController.changePassword = async (req, res, next) => {
     const {user_name, old_password, new_password} = req.body;
 
@@ -116,6 +123,8 @@ userController.changePassword = async (req, res, next) => {
     }
 };
 
+// Adds a user profile picture url when user uploads a new profile picture
+// photos are saved in firebase storage
 userController.updateUserProfilePicture = async (req, res, next) => {
     try {
         let user_id = req.user._id;
@@ -127,6 +136,7 @@ userController.updateUserProfilePicture = async (req, res, next) => {
     }
 }
 
+// Updates user first name
 userController.updateUserFirstName = async (req, res, next) => {
     try {
         let user_id = req.body.user_id;
@@ -138,6 +148,7 @@ userController.updateUserFirstName = async (req, res, next) => {
     }
 }
 
+// Updates user last name
 userController.updateUserLastName = async (req, res, next) => {
     try {
         let user_id = req.body.user_id;
@@ -149,7 +160,8 @@ userController.updateUserLastName = async (req, res, next) => {
     }
 }
 
-userController.updateUserEmailName = async (req, res, next) => {
+// Updates user email
+userController.updateUserEmail = async (req, res, next) => {
     try {
         let user_id = req.body.user_id;
         let email = req.body.email;
@@ -160,6 +172,7 @@ userController.updateUserEmailName = async (req, res, next) => {
     }
 }
 
+// Changes users access to admin and vice versa
 userController.updateUserAccessRights = async (req, res, next) => {
     try {
         let user_id = req.body.user_id;

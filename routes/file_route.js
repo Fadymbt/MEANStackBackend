@@ -26,9 +26,8 @@ router.all('*', (req, res, next) => {
 /**
  * Add Protected Routes under this comment
  */
-router.post('/uploadFile', fileController.uploadFile);
 router.post('/deleteFile', fileController.deleteFile);
-router.post('/getFiles', fileController.getFiles);
+router.get('/getFiles', fileController.getFiles);
 router.post('/saveDownloadURL', fileController.saveDownloadURL);
 router.post('/getFileAsString', fileController.getFileAsString);
 
