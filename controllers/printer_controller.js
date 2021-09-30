@@ -198,4 +198,23 @@ printerController.getAllPrints = async (req, res, next) => {
     }
 }
 
+printerController.getPrinterPrints = async (req, res, next) => {
+    try {
+        const { printer_id } = req.params;
+        let printerPrints = Print.find({printer_id: printer_id});
+        res.send(printerPrints);
+    } catch (error) {
+        next(error);
+    }
+}
+
+printerController.getUserPrints = async (req, res, next) => {
+    try {
+        let user_id = req.user._id;
+        let userPrints = Print.find({user_id: user_id});
+        res.send(userPrints);
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = printerController;

@@ -41,7 +41,9 @@ router.post('/changePrinterStatus', printerController.changePrinterStatus);
 router.post('/addPrint', printerController.addPrint);
 router.post('/endPrint', printerController.endPrint);
 router.get('/getPrints/:printer_id', printerController.addPrint);
-router.get('/getAllPrints', printerController.getAllPrints);
+router.get('/getAllPrints', adminAuth, printerController.getAllPrints);
+router.get('/getPrinterPrints/:printer_id', adminAuth, printerController.getPrinterPrints);
+router.get('/getUserPrints', printerController.getUserPrints);
 
 
 module.exports = router;
