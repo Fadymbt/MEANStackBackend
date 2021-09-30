@@ -1,5 +1,6 @@
 const Printer = require("../models/printer");
 const Status = require("../models/status");
+const Print = require("../models/print");
 const e = require("express");
 
 let printerController = {};
@@ -127,22 +128,6 @@ printerController.changePrinterStatus = async (req, res, next) => {
     }
 }
 
-// Starts simulating a print by adding the generated information from the addPrint function
-startPrint = (_id, user_id, file_name, printing_duration) => {
-    let printer = Printer.find({_id: _id});
-    let current_print;
-
-    if (printer.printing_queue.length > 0) {
-        if (!printer.printing_queue[0].active) {
-            current_print = printer.queue[0];
-            current_print.active = true;
-            current_print.print_start_time = new Date().getTime();
-            current_print.print_end_time = current_print.print_start_time + current_print.duration;
-            Printer.updateOne({_id: _id, printing_queue: {user_id: user_id, file_name: file_name, duration: printing_duration}}, {$push: {printing_queue: current_print}}, {new: true, upsert: true, multi: true});
-        }
-    }
-}
-
 // Adds print to the printer and starts simulating a print with a random duration between 2 and 10 hours
 printerController.addPrint = async (req, res, next) => {
     try {
@@ -150,11 +135,32 @@ printerController.addPrint = async (req, res, next) => {
         let file_name = req.body.file_name;
         let user_id = req.user._id;
 
+        let all_prints = await Print.find({});
         let printing_duration = Math.floor(Math.random() * (36000000 - 7200000 + 1)) + 7200000;
+        let print;
+        if (all_prints.length === 0) {
+            let print_start_time = new Date().getTime();
+            print = new Print({
+                user_id: user_id,
+                file_name: file_name,
+                printer_id: _id,
+                print_start_time: print_start_time,
+                print_end_time: print_start_time + printing_duration,
+                active: true,
+                duration: printing_duration
+            });
+        } else {
+            print = new Print({
+                user_id: user_id,
+                file_name: file_name,
+                printer_id: _id,
+                duration: printing_duration
+            });
+        }
 
-        await Printer.updateOne({_id: _id}, {$push: {printing_queue: {user_id: user_id, file_name: file_name, duration: printing_duration}}}, {new: true, upsert: true, multi: true});
+        await print.save();
 
-        startPrint(_id, user_id, file_name, printing_duration);
+        await Printer.updateOne({_id: _id}, {$push: {printing_queue: print._id}}, {new: true, upsert: true, multi: true});
 
         res.send("Print Added Successfully");
     } catch (error) {
@@ -165,21 +171,15 @@ printerController.addPrint = async (req, res, next) => {
 // Ends print simulation by adding print to the finished_prints queue in the database
 printerController.endPrint = async (req, res, next) => {
     try {
-        let printer_id = req.body.printer_id;
         let print_id = req.body.print_id;
-        let print = await Printer.find({printing_queue: {$in: {_id: print_id}}});
+        let print = await Print.find({_id: print_id});
 
-        await Printer.updateOne({_id: printer_id}, {printing_queue: {$pull: {_id: print_id}}}, {new: true, upsert: true, multi: true});
+        await Printer.updateOne({_id: print.printer_id}, {printing_queue: {$pull: [print_id]}}, {new: true, upsert: true, multi: true});
+        await Printer.updateOne({_id: print.printer_id}, {finished_prints: {$push: [print_id]}}, {new: true, upsert: true, multi: true});
 
-        let finished_print = {
-            user_id: await print.user_id,
-            file_name: await print.file_name,
-            print_start_time: await print.print_start_time,
-            print_end_time: await print.print_end_time,
-            duration: await print.duration
-        }
+        await Printer.find({_id: print.printer_id}, {'printing_queue': {$slice: 1}});
+        // db.getFirstElementInArrayDemo.find({},{"StudentSubject":{$slice:1}});
 
-        await Printer.updateOne({_id: _id}, {$push: {finished_prints: finished_print}}, {new: true, upsert: true, multi: true});
         res.send("Print ended successfully");
     } catch (error) {
         next(error);
