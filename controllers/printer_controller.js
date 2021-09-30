@@ -174,13 +174,23 @@ printerController.endPrint = async (req, res, next) => {
         let print_id = req.body.print_id;
         let print = await Print.find({_id: print_id});
 
-        await Printer.updateOne({_id: print.printer_id}, {printing_queue: {$pull: [print_id]}}, {new: true, upsert: true, multi: true});
-        await Printer.updateOne({_id: print.printer_id}, {finished_prints: {$push: [print_id]}}, {new: true, upsert: true, multi: true});
+        await Printer.updateOne({_id: print.printer_id}, {$pull: {printing_queue: [print_id]}}, {new: true, upsert: true, multi: true});
+        await Printer.updateOne({_id: print.printer_id}, {$push: {finished_prints: [print_id]}}, {new: true, upsert: true, multi: true});
 
-        await Printer.find({_id: print.printer_id}, {'printing_queue': {$slice: 1}});
+        let next_print = await Printer.find({_id: print.printer_id}, {'printing_queue': {$slice: 1}});
+        console.log(next_print);
         // db.getFirstElementInArrayDemo.find({},{"StudentSubject":{$slice:1}});
 
         res.send("Print ended successfully");
+    } catch (error) {
+        next(error);
+    }
+}
+
+printerController.getAllPrints = async (req, res, next) => {
+    try {
+        let all_prints = await Print.find({});
+        res.send(all_prints);
     } catch (error) {
         next(error);
     }
