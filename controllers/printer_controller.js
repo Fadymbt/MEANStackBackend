@@ -189,6 +189,7 @@ printerController.endPrint = async (req, res, next) => {
     }
 }
 
+// returns all the prints in all printer queues
 printerController.getAllPrints = async (req, res, next) => {
     try {
         let all_prints = await Print.find({});
@@ -198,6 +199,7 @@ printerController.getAllPrints = async (req, res, next) => {
     }
 }
 
+// Returns all prints for a specific printer
 printerController.getPrinterPrints = async (req, res, next) => {
     try {
         const { printer_id } = req.params;
@@ -208,6 +210,7 @@ printerController.getPrinterPrints = async (req, res, next) => {
     }
 }
 
+// Returns all prints of a specific user (logged in user)
 printerController.getUserPrints = async (req, res, next) => {
     try {
         let user_id = req.user._id;
