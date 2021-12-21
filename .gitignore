@@ -231,4 +231,7 @@ fabric.properties
 # https://plugins.jetbrains.com/plugin/12206-codestream
 .idea/codestream.xml
 
+# Removing env file from public repository
+.env
+
 # End of https://www.toptal.com/developers/gitignore/api/webstorm,node
